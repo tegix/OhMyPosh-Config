@@ -62,8 +62,7 @@
           Ejecuta los siguientes comandos en PowerShell uno por uno y presiona
           Enter:
         </li>
-        <pre><code class="powershell">
-$params = @{
+        <pre><code class="powershell">$params = @{
     Subject = 'CN=PowerShell Code Signing Cert'
     Type = 'CodeSigning'
     CertStoreLocation = 'Cert:\CurrentUser\My'
@@ -76,8 +75,7 @@ $cert = New-SelfSignedCertificate @params
           C:\Ruta\Para\ExportarCertificado.pfx con la ubicación y el nombre de
           archivo deseados:
         </li>
-        <pre><code class="powershell">
-$exportPath = 'C:\Ruta\Para\ExportarCertificado.pfx'
+        <pre><code class="powershell">$exportPath = 'C:\Ruta\Para\ExportarCertificado.pfx'
 $cert | Export-PfxCertificate -FilePath $exportPath -Password (ConvertTo-SecureString -String 'TuContraseña' -AsPlainText -Force)
 </code></pre>
         <li>
