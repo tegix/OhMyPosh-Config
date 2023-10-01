@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manual para Instalar y Configurar Oh My Posh en PowerShell</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Manual para Instalar y Configurar Oh My Posh en PowerShell</h1>
+      <div class="toggle-dark-mode" id="dark-mode-toggle">
+        <img
+          src="assets/light-mode.svg"
+          alt="Light Mode"
+          id="light-mode-icon"
+        />
+        <img
+          src="assets/dark-mode.png"
+          alt="Dark Mode"
+          id="dark-mode-icon"
+          style="display: none"
+        />
+      </div>
+    </header>
+    <div class="step">
+      <h2>Paso 1: Instalación de Oh My Posh</h2>
+      <ol>
+        <li>Abre PowerShell como administrador.</li>
+        <li>Para instalar Oh My Posh, utiliza el siguiente comando:</li>
+        <pre><code class="powershell">winget install oh-my-posh</code></pre>
+      </ol>
+    </div>
+    <div class="step">
+      <h2>Paso 2: Configuración del Perfil de PowerShell</h2>
+      <ol>
+        <li>
+          Abre tu perfil de PowerShell. Para encontrar su ubicación, copia y
+          pega el siguiente comando en PowerShell y presiona Enter:
+        </li>
+        <pre><code class="powershell">notepad $PROFILE</code></pre>
+        <li>
+          Si no tienes un perfil de PowerShell, puedes crear uno con el
+          siguiente comando:
+        </li>
+        <pre><code class="powershell">New-Item -Path $PROFILE -Type File -Force</code></pre>
+        <li>
+          Configura PowerShell para permitir la ejecución de scripts locales
+          ejecutando el siguiente comando:
+        </li>
+        <pre><code class="powershell">Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine</code></pre>
+      </ol>
+    </div>
+    <div class="step">
+      <h2>Paso 3: Creación de un Certificado de Firma (Opcional)</h2>
+      <ol>
+        <li>
+          Si deseas agregar una capa adicional de seguridad firmando tu script
+          de perfil, puedes crear un certificado de firma de código autónomo.
+        </li>
+        <li>
+          Ejecuta los siguientes comandos en PowerShell uno por uno y presiona
+          Enter:
+        </li>
+        <pre><code class="powershell">
+$params = @{
+    Subject = 'CN=PowerShell Code Signing Cert'
+    Type = 'CodeSigning'
+    CertStoreLocation = 'Cert:\CurrentUser\My'
+    HashAlgorithm = 'sha256'
+}
+$cert = New-SelfSignedCertificate @params
+</code></pre>
+        <li>
+          Exporta el certificado a un archivo .pfx. Reemplaza
+          C:\Ruta\Para\ExportarCertificado.pfx con la ubicación y el nombre de
+          archivo deseados:
+        </li>
+        <pre><code class="powershell">
+$exportPath = 'C:\Ruta\Para\ExportarCertificado.pfx'
+$cert | Export-PfxCertificate -FilePath $exportPath -Password (ConvertTo-SecureString -String 'TuContraseña' -AsPlainText -Force)
+</code></pre>
+        <li>
+          Asegúrate de reemplazar 'TuContraseña' con una contraseña segura que
+          protegerá el archivo de certificado exportado.
+        </li>
+        <li>
+          Configura la política de ejecución para permitir el uso del
+          certificado:
+        </li>
+        <pre><code class="powershell">Set-ExecutionPolicy RemoteSigned</code></pre>
+      </ol>
+    </div>
+    <div class="step">
+      <h2>Paso 4: Firma de tu Script de Perfil</h2>
+      <ol>
+        <li>
+          Firma tu script de perfil con el certificado que creaste (si lo
+          hiciste) usando el siguiente comando:
+        </li>
+        <pre><code class="powershell">Set-AuthenticodeSignature -FilePath $PROFILE -Certificate (Get-PfxCertificate -FilePath $exportPath) -HashAlgorithm SHA256</code></pre>
+      </ol>
+    </div>
+    <div class="step">
+      <h2>Paso 5: Establecer un Tema de Oh My Posh</h2>
+      <ol>
+        <li>
+          Agrega la siguiente línea al final de tu archivo de perfil de
+          PowerShell para establecer el tema "paradox" (puedes reemplazar
+          "paradox" con el tema que prefieras):
+        </li>
+        <pre><code class="powershell">oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\paradox.omp.json" | Invoke-Expression</code></pre>
+      </ol>
+    </div>
+    <footer>
+      <p>
+        ¡Listo! Ahora, cada vez que abras una nueva instancia de PowerShell, Oh
+        My Posh se cargará automáticamente con el tema que hayas configurado.
+        ¡Disfruta de tu símbolo del sistema personalizado en PowerShell!
+      </p>
+    </footer>
+    <script src="index.js"></script>
+  </body>
+</html>
